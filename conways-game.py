@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import numpy as np
+import argparse
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 
@@ -22,6 +23,8 @@ grid = im.set_data(newGrid)
 
 def update(*args):
     global grid, newGrid
+    # updated according to randomgrid game rules
+    # the update continues until all 1's are 0.
 
     # calculate the sum of 8-neghbor
     grid =randomGrid
@@ -39,6 +42,13 @@ def update(*args):
     im.set_data(newGrid)
 
 def main():
+    global N
+    parser = argparse.ArgumentParser(description="Runs Conway's Game of Life simulation.")
+    parser.add_argument('--gridSize','-N' , action="store",
+                        help="Enter N value to create grid size", required=True)
+    args = parser.parse_args()
+    N = args.gridSize
+
     # call the animation
     animation = FuncAnimation(fig, update, interval=10, frames=2000)
     plt.show()

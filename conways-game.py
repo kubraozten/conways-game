@@ -20,10 +20,27 @@ im = plt.imshow(newGrid, interpolation='nearest', cmap=plt.cm.cubehelix, vmin=0,
 plt.xticks([]), plt.yticks([])
 grid = im.set_data(newGrid)
 
+def update(*args):
+    global grid, newGrid
+
+    # calculate the sum of 8-neghbor
+    grid =randomGrid
+    neghbor = (grid[0:-2, 0:-2] + grid[0:-2, 1:-1] + grid[0:-2, 2:] +
+               grid[1:-1, 0:-2]                    + grid[1:-1, 2:] +
+               grid[2:  , 0:-2] + grid[2:  , 1:-1] + grid[2:  , 2:])
+    # calculating survivors
+    birth = (neghbor == 3) & (grid[1:-1, 1:-1] == 0)
+    survive = ((neghbor == 2) | (neghbor == 3)) & (grid[1:-1, 1:-1] == 1)
+    # reset for update (all set to dead)
+    grid[...] = 0
+    # update in life
+    grid[1:-1, 1:-1][birth | survive] = 1
+    newGrid[...] = grid
+    im.set_data(newGrid)
 
 def main():
     # call the animation
-    animation = FuncAnimation(fig, grid, interval=10, frames=2000)
+    animation = FuncAnimation(fig, update, interval=10, frames=2000)
     plt.show()
 
 if __name__ == "__main__":
